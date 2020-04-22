@@ -29,7 +29,8 @@ curl -s -X POST -H "Content-Type: application/json" \
   }
 }
 
-# You would normally pass these headers in your GraphQL request and the response would be available to Hasura GraphQL Engine
+# You would normally pass these headers in your GraphQL request
+# and the response would be available to Hasura GraphQL Engine
 curl -s -X GET -H "Authorization: Bearer e376011c-cfce-4119-ab59-c04c793fea3d" \
     -H "X-Hasura-Role: manager" \
     http://localhost:8082/api/1.0/webhook | jq .
@@ -41,7 +42,8 @@ curl -s -X GET -H "Authorization: Bearer e376011c-cfce-4119-ab59-c04c793fea3d" \
 
 
 # Service example
-# Your service normally pass these headers in its GraphQL request and the response would be available to Hasura GraphQL Engine
+# Your service normally pass these headers in its GraphQL request
+# and the response would be available to Hasura GraphQL Engine
 curl -s -X GET -H "Authorization: Bearer <api_key>" \
     -H "X-Authorization-Type: API-Key" \
     http://localhost:8082/api/1.0/webhook | jq .
