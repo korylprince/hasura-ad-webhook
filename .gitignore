@@ -1,0 +1,4 @@
+*.swp
+env
+test.py
+tags
