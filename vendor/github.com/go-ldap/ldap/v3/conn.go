@@ -1,6 +1,7 @@
 package ldap
 
 import (
+	"bufio"
 	"crypto/tls"
 	"errors"
 	"fmt"
@@ -129,6 +130,15 @@ func DialWithTLSConfig(tc *tls.Config) DialOpt {
 	}
 }
 
+// DialWithTLSDialer is a wrapper for DialWithTLSConfig with the option to
+// specify a net.Dialer to for example define a timeout or a custom resolver.
+func DialWithTLSDialer(tlsConfig *tls.Config, dialer *net.Dialer) DialOpt {
+	return func(dc *DialContext) {
+		dc.tc = tlsConfig
+		dc.d = dialer
+	}
+}
+
 // DialContext contains necessary parameters to dial the given ldap URL.
 type DialContext struct {
 	d  *net.Dialer
@@ -145,7 +155,7 @@ func (dc *DialContext) dial(u *url.URL) (net.Conn, error) {
 
 	host, port, err := net.SplitHostPort(u.Host)
 	if err != nil {
-		// we asume that error is due to missing port
+		// we assume that error is due to missing port
 		host = u.Host
 		port = ""
 	}
@@ -390,7 +400,12 @@ func (l *Conn) sendMessageWithFlags(packet *ber.Packet, flags sendMessageFlags) 
 			responses: responses,
 		},
 	}
-	l.sendProcessMessage(message)
+	if !l.sendProcessMessage(message) {
+		if l.IsClosing() {
+			return nil, NewError(ErrorNetwork, errors.New("ldap: connection closed"))
+		}
+		return nil, NewError(ErrorNetwork, errors.New("ldap: could not send message for unknown reason"))
+	}
 	return message.Context, nil
 }
 
@@ -501,7 +516,7 @@ func (l *Conn) processMessages() {
 				// All reads will return immediately
 				if msgCtx, ok := l.messageContexts[message.MessageID]; ok {
 					l.Debug.Printf("Receiving message timeout for %d", message.MessageID)
-					msgCtx.sendResponse(&PacketResponse{message.Packet, errors.New("ldap: connection timed out")})
+					msgCtx.sendResponse(&PacketResponse{message.Packet, NewError(ErrorNetwork, errors.New("ldap: connection timed out"))})
 					delete(l.messageContexts, message.MessageID)
 					close(msgCtx.responses)
 				}
@@ -527,12 +542,13 @@ func (l *Conn) reader() {
 		}
 	}()
 
+	bufConn := bufio.NewReader(l.conn)
 	for {
 		if cleanstop {
 			l.Debug.Printf("reader clean stopping (without closing the connection)")
 			return
 		}
-		packet, err := ber.ReadPacket(l.conn)
+		packet, err := ber.ReadPacket(bufConn)
 		if err != nil {
 			// A read error is expected here if we are closing the connection...
 			if !l.IsClosing() {
