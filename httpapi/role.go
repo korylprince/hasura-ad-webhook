@@ -5,6 +5,7 @@ import (
 	"github.com/korylprince/httputil/session"
 )
 
+// UserRoles returns the roles for the session user
 func (s *Server) UserRoles(sess session.Session) []string {
 	rolesMap := make(map[string]struct{})
 	user := sess.(*ad.User)
