@@ -7,7 +7,7 @@ FROM alpine:latest
 ARG GO_PROJECT_NAME
 ENV GO_PROJECT_NAME=${GO_PROJECT_NAME}
 
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates bash
 
 COPY --from=builder /go/bin/fileenv /
 COPY docker-entrypoint.sh /
