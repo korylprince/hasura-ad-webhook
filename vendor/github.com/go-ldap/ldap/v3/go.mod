@@ -1,9 +1,10 @@
 module github.com/go-ldap/ldap/v3
 
-go 1.13
+go 1.14
 
 require (
-	github.com/Azure/go-ntlmssp v0.0.0-20200615164410-66371956d46c
-	github.com/go-asn1-ber/asn1-ber v1.5.1
-	golang.org/x/crypto v0.0.0-20200604202706-70a84ac30bf9 // indirect
+	github.com/Azure/go-ntlmssp v0.0.0-20220621081337-cb9428e4ac1e
+	github.com/go-asn1-ber/asn1-ber v1.5.4
+	github.com/stretchr/testify v1.7.2 // indirect
+	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 )
