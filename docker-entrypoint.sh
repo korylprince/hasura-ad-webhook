@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
@@ -16,4 +16,4 @@ done
 
 export APIKEYROLEMAP=$(join_by , "${rolemap[@]}")
 
-exec $1
+/$GO_PROJECT_NAME

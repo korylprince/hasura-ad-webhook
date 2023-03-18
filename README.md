@@ -87,7 +87,7 @@ Configure Hasura GraphQL Engine to communicate with this service by setting the 
 
 # Docker
 
-You can use the pre-built Docker container, [korylprince/hasura-ad-webhook](https://hub.docker.com/r/korylprince/hasura-ad-webhook/).
+You can use the pre-built Docker container, ghcr.io/korylprince/hasura-ad-webhook.
 
 ## Docker Configuration
 
@@ -114,5 +114,5 @@ docker run -d --name="hasura-ad-webhook" \
     -e APIKEYROLEMAP_2_KEY_FILE="/run/secrets/key_2" \
     -e LISTENADDR=":80" \
     --restart="always" \
-    korylprince/hasura-ad-webhook:latest
+    ghcr.io/korylprince/hasura-ad-webhook:latest
 ```
